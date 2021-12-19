@@ -1,0 +1,63 @@
+name: CI
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        # with:
+        # path: 'node'
+      - name: Login to ECR
+        uses: docker/login-action@v1 
+        with:
+          registry: ${{ secrets.ECR_NODE }}
+          username: ${{ secrets.ECR_ACCESS_KEY_ID }}
+          password: ${{ secrets.ECR_SECRET_ACCESS_KEY }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          #          platforms: linux/amd64
+          push: true
+          tags: |
+            234104157315.dkr.ecr.eu-central-1.amazonaws.com/node:latest
+          #   ${{ secrets.ECR_NODE }}/node:1.0.0
+      - uses: actions/checkout@v2
+        with:
+          repository: 'obryndzii/btt-helm-charts'
+          ref: 'refs/heads/master'
+          path: 'charts'
+          token: ${{ secrets.PAT }}
+      - uses: actions/checkout@v2
+        with:
+          repository: 'obryndzii/btt-docker-images'
+          ref: 'refs/heads/master'
+          path: 'images'
+          token: ${{ secrets.PAT }}
+      - name: Check
+        run: |
+          pwd
+          find 
+#      - name: Install kubectl
+#        run: |
+#          curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
+#          chmod +x ./kubectl
+#          ./kubectl version --client
+#          ./kubectl get svc
+#          ./kubectl get pods
+#          ./kubectl get ingress
+#      - name: Install helm
+#        run: |
+#          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+#          chmod 700 get_helm.sh
+#          ./get_helm.sh
+#          helm list -A
+#
