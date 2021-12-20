@@ -2,19 +2,25 @@ name: CI
 on:
   push:
     branches: [ develop ]
+    #  tags:
+            #      - 'v*'
   pull_request:
-    branches: [ develop ]
-
+    branches:
+      - 'develop'
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        # with:
-        # path: 'node'
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ secrets.ECR_NODE }}
       - name: Login to ECR
         uses: docker/login-action@v1 
         with:
@@ -25,11 +31,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          #          platforms: linux/amd64
-          push: true
-          tags: |
-            234104157315.dkr.ecr.eu-central-1.amazonaws.com/node:latest
-          #   ${{ secrets.ECR_NODE }}/node:1.0.0
+          #          push: ${{ github.event_name != 'pull_request' }}
+          #tags: ${{ steps.meta.outputs.tags }}
       - uses: actions/checkout@v2
         with:
           repository: 'obryndzii/btt-helm-charts'
@@ -45,7 +48,7 @@ jobs:
       - name: Check
         run: |
           pwd
-          find 
+          helm version 
 #      - name: Install kubectl
 #        run: |
 #          curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
