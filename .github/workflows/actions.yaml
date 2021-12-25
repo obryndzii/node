@@ -28,9 +28,13 @@ jobs:
         name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          role-to-assume: arn:aws:iam::234104157315:role/GitHubOIDC-eu-central-1-Role-HPYVFEPWUV02
           aws-region: eu-central-1
           role-session-name: GitHubActions
+      -
+        name: Run test
+        run: |
+          aws sts get-caller-identity
 #      -
 #        name: Login to ECR
 #        uses: docker/login-action@v1
@@ -45,30 +49,30 @@ jobs:
 #          tags: |
 #            ${{ secrets.ECR_NODE }}:latest
 #            ${{ secrets.ECR_NODE }}:1.0.0
-      - uses: actions/checkout@v2
-        with:
-          repository: 'obryndzii/btt-helm-charts'
-          ref: 'refs/heads/master'
-          path: 'charts'
-          token: ${{ secrets.PAT }}
-      - name: 'Deploy'
-        uses: 'obryndzii/helm@master'
-        with:
-          #helm: 'helm3'
-          #repository: 'https://github.com/obryndzii/btt-helm-charts'
-          release: 'nginx'
-          namespace: 'default'
-          chart: 'app'
-          token: '${{ secrets.PAT }}'
-#          values: |
-#            name: foobar
-#          value-files: >-
-#          [
-#            "values.yaml", 
-#            "values.production.yaml"
-#          ]
-        env:
-          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+#      - uses: actions/checkout@v2
+#        with:
+#          repository: 'obryndzii/btt-helm-charts'
+#          ref: 'refs/heads/master'
+#          path: 'charts'
+#          token: ${{ secrets.PAT }}
+#      - name: 'Deploy'
+#        uses: 'obryndzii/helm@master'
+#        with:
+#          #helm: 'helm3'
+#          #repository: 'https://github.com/obryndzii/btt-helm-charts'
+#          release: 'nginx'
+#          namespace: 'default'
+#          chart: 'app'
+#          #          token: '${{ secrets.PAT }}'
+##          values: |
+##            name: foobar
+##          value-files: >-
+##          [
+##            "values.yaml", 
+##            "values.production.yaml"
+##          ]
+#        env:
+#          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
 #      - uses: actions/checkout@v2
 #        with:
 #          repository: 'obryndzii/btt-helm-charts'
