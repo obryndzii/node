@@ -54,6 +54,7 @@ jobs:
       - name: 'Deploy'
         uses: 'obryndzii/helm@master'
         with:
+          helm: 'helm3'
           repository: 'https://github.com/obryndzii/btt-helm-charts'
           release: 'node-app'
           namespace: 'prod'
