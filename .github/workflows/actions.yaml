@@ -54,8 +54,8 @@ jobs:
       - name: 'Deploy'
         uses: 'obryndzii/helm@master'
         with:
-          helm: 'helm3'
-          #  repository: 'https://github.com/obryndzii/btt-helm-charts'
+          #helm: 'helm3'
+          #repository: 'https://github.com/obryndzii/btt-helm-charts'
           release: 'nginx'
           namespace: 'default'
           chart: 'app'
