@@ -47,7 +47,7 @@ jobs:
 #            ${{ secrets.ECR_NODE }}:1.0.0
       - uses: actions/checkout@v2
         with:
-                #repository: 'obryndzii/btt-helm-charts'
+          repository: 'obryndzii/btt-helm-charts'
           ref: 'refs/heads/master'
           path: 'charts'
           token: ${{ secrets.PAT }}
@@ -55,7 +55,7 @@ jobs:
         uses: 'obryndzii/helm@master'
         with:
           helm: 'helm3'
-          repository: 'https://github.com/obryndzii/btt-helm-charts'
+          #  repository: 'https://github.com/obryndzii/btt-helm-charts'
           release: 'nginx'
           namespace: 'default'
           chart: 'app'
