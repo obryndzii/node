@@ -55,7 +55,8 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
-          helm upgrade node-app --install --wait charts/node-app
+          helm version
+          helm upgrade node-app --install --wait charts/node-app 
 #      - uses: actions/checkout@v2
 #        with:
 #          repository: 'obryndzii/btt-helm-charts'
