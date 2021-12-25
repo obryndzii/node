@@ -51,12 +51,23 @@ jobs:
           ref: 'refs/heads/master'
           path: 'charts'
           token: ${{ secrets.PAT }}
-      - name: helm deploy
+      - name: 'Deploy'
+        uses: 'obryndzii/helm@master'
+        with:
+          repository: 'https://github.com/obryndzii/btt-helm-charts'
+          release: 'node-app'
+          namespace: 'prod'
+          chart: 'node-app'
+          token: '${{ secrets.PAT }}'
+#          values: |
+#            name: foobar
+#          value-files: >-
+#          [
+#            "values.yaml", 
+#            "values.production.yaml"
+#          ]
         env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        run: |
-          helm version
-          helm upgrade node-app --install --wait charts/node-app 
+          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
 #      - uses: actions/checkout@v2
 #        with:
 #          repository: 'obryndzii/btt-helm-charts'
