@@ -56,9 +56,9 @@ jobs:
         with:
           helm: 'helm3'
           repository: 'https://github.com/obryndzii/btt-helm-charts'
-          release: 'node-app'
-          namespace: 'prod'
-          chart: 'node-app'
+          release: 'nginx'
+          namespace: 'default'
+          chart: 'app'
           token: '${{ secrets.PAT }}'
 #          values: |
 #            name: foobar
