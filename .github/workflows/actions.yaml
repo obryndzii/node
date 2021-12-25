@@ -47,7 +47,7 @@ jobs:
 #            ${{ secrets.ECR_NODE }}:1.0.0
       - uses: actions/checkout@v2
         with:
-          repository: 'obryndzii/btt-helm-charts'
+                #repository: 'obryndzii/btt-helm-charts'
           ref: 'refs/heads/master'
           path: 'charts'
           token: ${{ secrets.PAT }}
