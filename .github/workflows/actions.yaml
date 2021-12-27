@@ -46,8 +46,8 @@ jobs:
           token: ${{ secrets.PAT }}
       - name: Check
         run: |
-          pwd
-          helm list -A
+          
+          helm upgrade --install node-app charts/node-app
 #      - name: Install kubectl
 #        run: |
 #          curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
