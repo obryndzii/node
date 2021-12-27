@@ -21,7 +21,7 @@ jobs:
 #        uses: docker/metadata-action@v3
 #        with:
 #          images: ${{ secrets.ECR_NODE }}
-#      - 
+      - 
         name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
