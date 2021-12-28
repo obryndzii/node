@@ -61,4 +61,4 @@ jobs:
           token: ${{ secrets.PAT }}
       - name: Deploy
         run: |
-          helm upgrade --install node-app charts/node-app -n prod -f charts/prod-node-app.yaml
+          helm upgrade --install node-app charts/node-app -n prod
