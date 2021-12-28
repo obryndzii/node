@@ -15,12 +15,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-#      -
-#        name: Docker meta
-#        id: meta
-#        uses: docker/metadata-action@v3
-#        with:
-#          images: ${{ secrets.ECR_NODE }}
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ secrets.ECR_NODE }}
+          tags: type=sha,enable=true,priority=100,prefix=sha-,suffix=,format=short
 #      - 
 #        name: Configure AWS Credentials
 #        uses: aws-actions/configure-aws-credentials@v1
@@ -45,20 +46,22 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.ECR_NODE }}:latest
-            ${{ secrets.ECR_NODE }}:1.0.0
+     #         latest
+     #       ${{ github.sha }}
+            ${{ steps.meta.outputs.tags }}
       - uses: actions/checkout@v2
         with:
           repository: 'obryndzii/btt-helm-charts'
           ref: 'refs/heads/master'
           path: 'charts'
           token: ${{ secrets.PAT }}
-      - uses: actions/checkout@v2
-        with:
-          repository: 'obryndzii/btt-docker-images'
-          ref: 'refs/heads/master'
-          path: 'images'
-          token: ${{ secrets.PAT }}
+#      - uses: actions/checkout@v2
+#        with:
+#          repository: 'obryndzii/btt-docker-images'
+#          ref: 'refs/heads/master'
+#          path: 'images'
+#          token: ${{ secrets.PAT }}
       - name: Deploy
         run: |
-          helm upgrade --install node-app charts/node-app -n prod
+          echo ${{ steps.meta.outputs.tags }}
+          helm upgrade --install node-app charts/node-app -n prod --set image.tag=${{ steps.meta.outputs.tags }}
