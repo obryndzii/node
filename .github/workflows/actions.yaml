@@ -46,8 +46,8 @@ jobs:
           context: .
           push: true
           tags: |
-     #         latest
-     #       ${{ github.sha }}
+            ${{ secrets.ECR_NODE }}:latest
+            ${{ secrets.ECR_NODE }}:${{ github.sha }}
             ${{ steps.meta.outputs.tags }}
       - uses: actions/checkout@v2
         with:
@@ -64,4 +64,4 @@ jobs:
       - name: Deploy
         run: |
           echo ${{ steps.meta.outputs.tags }}
-          helm upgrade --install node-app charts/node-app -n prod --set image.tag=${{ steps.meta.outputs.tags }}
+          helm upgrade --install node-app charts/node-app -n prod --set image.sha=${{ steps.meta.outputs.tags }}
