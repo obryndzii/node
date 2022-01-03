@@ -1,0 +1,4 @@
+build_agent_label=docker
+createImage='true'
+dindTimeout=300
+currentAppVersion='v1.0.1'
