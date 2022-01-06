@@ -2,11 +2,11 @@ name: master-CI
 on:
   push:
     branches:
-      - 'main'
       - 'master'
+    tags:
+      - 'v*.*.*'
   pull_request:
     branches:
-      - 'main'
       - 'master'
   workflow_dispatch:
 
@@ -18,23 +18,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-#      -
-#        name: Docker meta
-#        id: meta
-#        uses: docker/metadata-action@v3
-#        with:
-#          images: ${{ secrets.ECR_NODE }}
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ${{ secrets.ECR_NODE }}
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       - 
         name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::234104157315:role/GitHubOIDC-eu-central-1-Role-HPYVFEPWUV02
-          aws-region: eu-central-1
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
           role-session-name: GitHubActions
       -
         name: Run test
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         run: |
           aws sts get-caller-identity
       -
@@ -47,48 +57,33 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
-          tags: |
-            ${{ secrets.ECR_NODE }}:latest
-            ${{ secrets.ECR_NODE }}:1.0.0
-#
-#      - name: Get URL
-#        id: url
-#        uses: koslib/helm-eks-action@master
-#        env:
-#          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
-#        with:
-#          command: aws sts assume-role --role-arn "arn:aws:iam::234104157315:role/GitHubOIDC-eu-central-1-Role-HPYVFEPWUV02" --role-session-name AWSCLI-Session && kubectl get svc 
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 #      - 
-#        name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v1
+#        uses: actions/checkout@v2
 #        with:
-#          role-to-assume: arn:aws:iam::234104157315:role/ekspolicy
-#          aws-region: eu-central-1
-#          role-session-name: GitHubActions
-      - uses: actions/checkout@v2
-        with:
-          repository: 'obryndzii/btt-helm-charts'
-          ref: 'refs/heads/master'
-          path: 'charts'
-          token: ${{ secrets.PAT }}
-      -
-        name: helm
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-        run: |
-          aws sts get-caller-identity 
-          # curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
-          # chmod +x ./aws-iam-authenticator
-          # mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
-          # echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-          # aws-iam-authenticator token -i btt-X8XQ
-          echo "${KUBE_CONFIG}" > ./kubeconfig
-          curl -fsSL -o helm.tar.gz https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
-          tar xvf helm.tar.gz
-          #          aws eks update-kubeconfig --name btt-X8XQ --region eu-central-1
-          ./linux-amd64/helm list --kubeconfig kubeconfig
-          ./linux-amd64/helm upgrade --install node-app charts/node-app --namespace prod --kubeconfig kubeconfig
+#          repository: 'obryndzii/btt-helm-charts'
+#          ref: 'refs/heads/master'
+#          path: 'charts'
+#          token: ${{ secrets.PAT }}
+#      -
+#        name: helm
+#        env:
+#          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+#        run: |
+#          aws sts get-caller-identity 
+#          # curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
+#          # chmod +x ./aws-iam-authenticator
+#          # mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+#          # echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+#          # aws-iam-authenticator token -i btt-X8XQ
+#          echo "${KUBE_CONFIG}" > ./kubeconfig
+#          curl -fsSL -o helm.tar.gz https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
+#          tar xvf helm.tar.gz
+#          #          aws eks update-kubeconfig --name btt-X8XQ --region eu-central-1
+#          ./linux-amd64/helm list --kubeconfig kubeconfig
+#          ./linux-amd64/helm upgrade --install node-app charts/node-app --namespace prod --kubeconfig kubeconfig
 #      - uses: actions/checkout@v2
 #        with:
 #          repository: 'obryndzii/btt-helm-charts'
