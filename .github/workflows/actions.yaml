@@ -69,30 +69,30 @@ jobs:
         if: ${{ github.ref_type == 'tag' }}
         run: echo 'Tagged branch'
         
-#      - 
-#        uses: actions/checkout@v2
-#        with:
-#          repository: 'obryndzii/btt-helm-charts'
-#          ref: 'refs/heads/master'
-#          path: 'charts'
-#          token: ${{ secrets.PAT }}
-#      -
-#        name: helm
-#        env:
-#          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-#        run: |
-#          aws sts get-caller-identity 
-#          # curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
-#          # chmod +x ./aws-iam-authenticator
-#          # mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
-#          # echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-#          # aws-iam-authenticator token -i btt-X8XQ
-#          echo "${KUBE_CONFIG}" > ./kubeconfig
-#          curl -fsSL -o helm.tar.gz https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
-#          tar xvf helm.tar.gz
-#          #          aws eks update-kubeconfig --name btt-X8XQ --region eu-central-1
-#          ./linux-amd64/helm list --kubeconfig kubeconfig
-#          ./linux-amd64/helm upgrade --install node-app charts/node-app --namespace prod --kubeconfig kubeconfig
+      - 
+        uses: actions/checkout@v2
+        with:
+          repository: 'obryndzii/btt-helm-charts'
+          ref: 'refs/heads/master'
+          path: 'charts'
+          token: ${{ secrets.PAT }}
+      -
+        name: helm
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          aws sts get-caller-identity 
+          # curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
+          # chmod +x ./aws-iam-authenticator
+          # mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+          # echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+          # aws-iam-authenticator token -i btt-X8XQ
+          echo "${KUBE_CONFIG}" > ./kubeconfig
+          curl -fsSL -o helm.tar.gz https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
+          tar xvf helm.tar.gz
+          #          aws eks update-kubeconfig --name btt-X8XQ --region eu-central-1
+          ./linux-amd64/helm list --kubeconfig kubeconfig
+          ./linux-amd64/helm upgrade --install node-app charts/node-app --namespace prod --kubeconfig kubeconfig
 #      - uses: actions/checkout@v2
 #        with:
 #          repository: 'obryndzii/btt-helm-charts'
