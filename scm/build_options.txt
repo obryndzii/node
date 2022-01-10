@@ -2,3 +2,6 @@ build_agent_label=kaniko
 createImage=true
 dockerReleaseRegistry='234104157315.dkr.ecr.eu-central-1.amazonaws.com/node'
 currentAppVersion=v1.0.1
+npeHelmReleaseName=node-app
+npeNamespace=dev
+npeHelmChart=node-app
